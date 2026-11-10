@@ -1,0 +1,1479 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DIGIDUL SKY - Cyberpunk Gaming Lounge & Cafe</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Orbitron & Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+    <!-- SheetJS & html2pdf for reporting export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            bg: '#050B14',
+                            card: '#0D1527',
+                            border: '#1E293B',
+                            cyan: '#00F0FF',
+                            pink: '#FF007F',
+                            yellow: '#FACC15',
+                            purple: '#A855F7',
+                            amber: '#F59E0B'
+                        }
+                    },
+                    fontFamily: {
+                        orbitron: ['Orbitron', 'sans-serif'],
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #050B14; color: #F8FAFC; overflow-x: hidden; }
+        .font-orbitron { font-family: 'Orbitron', sans-serif; }
+        .cyber-border { position: relative; border: 1px solid #1E293B; }
+        .cyber-border::before { content: ''; position: absolute; top: -1px; left: -1px; width: 8px; height: 8px; background: #00F0FF; }
+        .cyber-border::after { content: ''; position: absolute; bottom: -1px; right: -1px; width: 8px; height: 8px; background: #FF007F; }
+        .cyber-glow { box-shadow: 0 0 20px rgba(0, 240, 255, 0.2); }
+        .cyber-glow-pink { box-shadow: 0 0 20px rgba(255, 0, 127, 0.2); }
+        .cyber-input { background: #080E1A; border: 1px solid #1E293B; color: #F8FAFC; outline: none; transition: all 0.3s ease; }
+        .cyber-input:focus { border-color: #00F0FF; box-shadow: 0 0 10px rgba(0, 240, 255, 0.3); }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #050B14; }
+        ::-webkit-scrollbar-thumb { background: #1E293B; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #00F0FF; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-cyber-cyan selection:text-cyber-bg">
+
+    <!-- TOP HEADER -->
+    <header class="bg-cyber-card/90 border-b border-cyber-border sticky top-0 z-50 backdrop-blur-md px-4 lg:px-8 py-3.5 flex justify-between items-center shadow-lg">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyber-cyan to-cyber-pink flex items-center justify-center text-cyber-bg font-bold font-orbitron text-xl shadow-lg cyber-glow">
+                <i class="fa-solid fa-gamepad"></i>
+            </div>
+            <div>
+                <h1 class="font-orbitron font-black text-base lg:text-xl tracking-wider bg-gradient-to-r from-cyber-cyan via-white to-cyber-pink bg-clip-text text-transparent">DIGIDUL SKY</h1>
+                <p class="text-[10px] text-slate-400 tracking-widest uppercase">Cyberpunk Gaming Lounge & Cafe</p>
+            </div>
+        </div>
+
+        <div class="flex items-center space-x-2.5 flex-wrap justify-center">
+            <a id="waAdminBtn" href="#" target="_blank" onclick="playClickSound()" class="px-3.5 py-2 bg-emerald-600/20 border border-emerald-500/50 rounded-xl text-emerald-400 font-bold hover:bg-emerald-600 hover:text-white transition flex items-center space-x-2 text-xs shadow-lg">
+                <i class="fa-brands fa-whatsapp text-base"></i>
+                <span>Admin WA</span>
+            </a>
+            <div id="headerMemberBadge" class="hidden items-center space-x-2 px-3 py-1.5 bg-cyan-500/20 border border-cyan-400/50 rounded-xl text-xs text-cyan-300">
+                <i class="fa-solid fa-user-check"></i>
+                <span id="headerMemberNameDisplay">Member</span>
+                <button onclick="logoutMember()" class="text-rose-400 hover:text-rose-300 ml-1 font-bold" title="Logout Member"><i class="fa-solid fa-right-from-bracket"></i></button>
+            </div>
+            <button id="headerMemberLoginBtn" onclick="playClickSound(); openModal('memberModal')" class="px-3.5 py-2 bg-cyber-cyan/10 border border-cyber-cyan/50 text-cyber-cyan font-bold rounded-xl hover:bg-cyber-cyan hover:text-cyber-bg transition flex items-center space-x-2 text-xs cyber-glow shadow-lg">
+                <i class="fa-solid fa-user-shield"></i>
+                <span>Member</span>
+            </button>
+            <button onclick="playClickSound(); openModal('operatorModal')" class="px-3.5 py-2 bg-rose-600/20 border border-rose-500/50 text-rose-400 font-bold rounded-xl hover:bg-rose-600 hover:text-white transition flex items-center space-x-2 text-xs cyber-glow-pink shadow-lg">
+                <i class="fa-solid fa-lock"></i>
+                <span>Operator / Kasir</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- NAVIGATION TABS -->
+    <nav class="bg-cyber-card/70 border-b border-cyber-border py-2.5 px-4 sticky top-[73px] z-40 backdrop-blur-md shadow-md">
+        <div class="max-w-7xl mx-auto flex space-x-2 overflow-x-auto no-scrollbar">
+            <button onclick="playClickSound(); switchTab('bookingTab')" id="btn-bookingTab" class="active px-4 py-2 rounded-xl text-xs font-bold font-orbitron transition flex items-center space-x-2 whitespace-nowrap bg-gradient-to-r from-cyan-500 to-blue-600 text-cyber-bg shadow-md">
+                <i class="fa-solid fa-desktop"></i><span>Booking PC</span>
+            </button>
+            <button onclick="playClickSound(); switchTab('consoleTab')" id="btn-consoleTab" class="px-4 py-2 rounded-xl text-xs font-bold font-orbitron transition flex items-center space-x-2 whitespace-nowrap text-slate-400 hover:text-white">
+                <i class="fa-solid fa-gamepad"></i><span>Rental Konsol</span>
+            </button>
+            <button onclick="playClickSound(); switchTab('makananTab')" id="btn-makananTab" class="px-4 py-2 rounded-xl text-xs font-bold font-orbitron transition flex items-center space-x-2 whitespace-nowrap text-slate-400 hover:text-white">
+                <i class="fa-solid fa-utensils"></i><span>Makanan Cafe</span>
+            </button>
+            <button onclick="playClickSound(); switchTab('minumanTab')" id="btn-minumanTab" class="px-4 py-2 rounded-xl text-xs font-bold font-orbitron transition flex items-center space-x-2 whitespace-nowrap text-slate-400 hover:text-white">
+                <i class="fa-solid fa-mug-hot"></i><span>Minuman Cafe</span>
+            </button>
+            <button onclick="playClickSound(); switchTab('invoiceTab')" id="btn-invoiceTab" class="px-4 py-2 rounded-xl text-xs font-bold font-orbitron transition flex items-center space-x-2 whitespace-nowrap text-slate-400 hover:text-white">
+                <i class="fa-solid fa-receipt"></i><span>Cek Invoice</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTAINER -->
+    <main class="max-w-7xl mx-auto p-4 lg:p-6 flex-1 w-full space-y-6">
+
+        <!-- TAB 1: BOOKING & LIVE PC -->
+        <section id="bookingTab" class="space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- FORM BOOKING PC -->
+                <div class="cyber-border bg-cyber-card p-6 rounded-2xl shadow-2xl">
+                    <h2 class="text-lg font-bold font-orbitron text-cyber-cyan mb-4 flex items-center space-x-2">
+                        <i class="fa-solid fa-ticket"></i><span>Pesan Station PC</span>
+                    </h2>
+                    <form id="pcBookingForm" onsubmit="submitPCBooking(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs uppercase font-semibold text-slate-400 mb-1">Nama / Nickname</label>
+                            <input type="text" id="pcName" required placeholder="Contoh: GhostRider" class="cyber-input w-full p-3 rounded-xl text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase font-semibold text-slate-400 mb-1">Pilih Kategori PC</label>
+                            <select id="pcCategory" onchange="updatePCList()" class="cyber-input w-full p-3 rounded-xl text-sm">
+                                <option value="Reguler">Reguler – Rp 5.000 / jam</option>
+                                <option value="VIP">VIP – Rp 8.000 / jam</option>
+                                <option value="VVIP">VVIP – Rp 12.000 / jam</option>
+                                <option value="Sultan">Sultan – Rp 20.000 / jam</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase font-semibold text-slate-400 mb-1">Pilih Unit Station</label>
+                            <select id="pcUnit" required class="cyber-input w-full p-3 rounded-xl text-sm"></select>
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase font-semibold text-slate-400 mb-1">Durasi Sewa (Jam)</label>
+                            <input type="number" id="pcDuration" min="0.5" step="0.5" value="1" oninput="calculatePCTotal()" class="cyber-input w-full p-3 rounded-xl text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase font-semibold text-slate-400 mb-1">Metode Pembayaran</label>
+                            <select id="pcPayment" onchange="togglePaymentProof('pc')" class="cyber-input w-full p-3 rounded-xl text-sm">
+                                <option value="Cash">Cash di Kasir</option>
+                                <option value="QRIS">Scan QRIS Resmi</option>
+                            </select>
+                        </div>
+                        <div id="qrisContainer" class="hidden bg-cyber-bg p-4 rounded-xl border border-cyber-border text-center space-y-2">
+                            <p class="text-xs text-slate-300">Scan QRIS untuk pembayaran instant:</p>
+                            <img src="https://gma-qris-prd.al-mp-id-p.cdn.gtflabs.io/G761272294/G761272294-0703A01-gma_branding-1794275776.png?response-content-disposition=attachment" alt="QRIS" class="mx-auto w-48 rounded-lg border border-cyber-cyan/40 bg-white p-2">
+                            <p class="text-[10px] text-amber-400">Pastikan nominal sesuai dengan total tagihan</p>
+                        </div>
+                        <div class="bg-cyber-bg p-3.5 rounded-xl border border-cyber-border flex justify-between items-center">
+                            <span class="text-xs text-slate-400 uppercase font-bold">Total Tagihan:</span>
+                            <span id="pcTotalDisplay" class="font-orbitron font-bold text-cyber-cyan text-base">Rp 5.000</span>
+                        </div>
+                        <button type="submit" class="w-full py-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-cyber-bg font-bold font-orbitron rounded-xl shadow-lg transition">
+                            Konfirmasi & Booking Sekarang
+                        </button>
+                    </form>
+                </div>
+
+                <!-- LIVE MONITORING STATION PC -->
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="cyber-border bg-cyber-card p-6 rounded-2xl shadow-2xl space-y-4">
+                        <div class="flex justify-between items-center">
+                            <h2 class="text-lg font-bold font-orbitron text-cyber-cyan flex items-center space-x-2">
+                                <i class="fa-solid fa-server"></i><span>Live Status PC Stations</span>
+                            </h2>
+                            <span class="px-3 py-1 bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 rounded-full text-xs font-semibold animate-pulse">Live Updating</span>
+                        </div>
+
+                        <!-- Reguler -->
+                        <div class="space-y-2">
+                            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Area Reguler (Rp 5.000/jam)</h3>
+                            <div id="gridReguler" class="grid grid-cols-2 sm:grid-cols-5 gap-3"></div>
+                        </div>
+
+                        <!-- VIP -->
+                        <div class="space-y-2 pt-2">
+                            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Area VIP (Rp 8.000/jam)</h3>
+                            <div id="gridVip" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
+                        </div>
+
+                        <!-- VVIP -->
+                        <div class="space-y-2 pt-2">
+                            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Area VVIP - RTX 4090 (Rp 12.000/jam)</h3>
+                            <div id="gridVvip" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+                        </div>
+
+                        <!-- Sultan -->
+                        <div class="space-y-2 pt-2">
+                            <h3 class="text-xs font-bold uppercase tracking-wider text-cyber-amber flex items-center space-x-1">
+                                <i class="fa-solid fa-crown text-amber-400"></i><span>Area Sultan - RTX 5090 (Rp 20.000/jam)</span>
+                            </h3>
+                            <div id="gridSultan" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: RENTAL KONSOL -->
+        <section id="consoleTab" class="space-y-6 hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- FORM KONSOL -->
+                <div class="cyber-border bg-cyber-card p-6 rounded-2xl shadow-2xl">
+                    <h2 class="text-lg font-bold font-orbitron text-cyber-pink mb-4 flex items-center space-x-2">
+                        <i class="fa-solid fa-gamepad"></i><span>Rental Konsol Game</span>
+                    </h2>
+                    <form id="consoleBookingForm" onsubmit="submitConsoleBooking(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs uppercase font-semibold text-slate-400 mb-1">Nama / Nickname</label>
+                            <input type="text" id="conName" required placeholder="Contoh: AlexGamer" class="cyber-input w-full p-3 rounded-xl text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase font-semibold text-slate-400 mb-1">Paket Konsol</label>
+                            <select id="conType" onchange="updateConsoleUnitList()" class="cyber-input w-full p-3 rounded-xl text-sm">
+                                <option value="Bronze">Bronze (Rp 10.000/jam)</option>
+                                <option value="Silver">Silver (Rp 15.000/jam)</option>
+                                <option value="Gold">Gold (Rp 25.000/jam)</option>
+                                <option value="Diamond">Diamond (Rp 45.000/jam)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase font-semibold text-slate-400 mb-1">Pilih Unit Konsol / Ruangan</label>
+                            <select id="conUnit" required class="cyber-input w-full p-3 rounded-xl text-sm"></select>
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase font-semibold text-slate-400 mb-1">Durasi Sewa (Jam)</label>
+                            <input type="number" id="conDuration" min="1" step="1" value="1" oninput="calculateConTotal()" class="cyber-input w-full p-3 rounded-xl text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase font-semibold text-slate-400 mb-1">Metode Pembayaran</label>
+                            <select id="conPayment" onchange="togglePaymentProof('con')" class="cyber-input w-full p-3 rounded-xl text-sm">
+                                <option value="Cash">Cash di Kasir</option>
+                                <option value="QRIS">Scan QRIS Resmi</option>
+                            </select>
+                        </div>
+                        <div id="qrisContainerCon" class="hidden bg-cyber-bg p-4 rounded-xl border border-cyber-border text-center space-y-2">
+                            <p class="text-xs text-slate-300">Scan QRIS untuk pembayaran instant:</p>
+                            <img src="https://gma-qris-prd.al-mp-id-p.cdn.gtflabs.io/G761272294/G761272294-0703A01-gma_branding-1794275776.png?response-content-disposition=attachment" alt="QRIS" class="mx-auto w-48 rounded-lg border border-cyber-cyan/40 bg-white p-2">
+                            <p class="text-[10px] text-amber-400">Pastikan nominal sesuai dengan total tagihan</p>
+                        </div>
+                        <div class="bg-cyber-bg p-3.5 rounded-xl border border-cyber-border flex justify-between items-center">
+                            <span class="text-xs text-slate-400 uppercase font-bold">Total Tagihan:</span>
+                            <span id="conTotalDisplay" class="font-orbitron font-bold text-cyber-pink text-base">Rp 10.000</span>
+                        </div>
+                        <button type="submit" class="w-full py-3 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white font-bold font-orbitron rounded-xl shadow-lg transition">
+                            Sewa Konsol Sekarang
+                        </button>
+                    </form>
+                </div>
+
+                <!-- LIVE KONSOL MONITORING -->
+                <div class="lg:col-span-2">
+                    <div class="cyber-border bg-cyber-card p-6 rounded-2xl shadow-2xl space-y-4">
+                        <h2 class="text-lg font-bold font-orbitron text-cyber-pink flex items-center space-x-2">
+                            <i class="fa-solid fa-tv"></i><span>Live Status Konsol Lounge</span>
+                        </h2>
+                        <div id="gridConsole" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: MAKANAN CAFE -->
+        <section id="makananTab" class="space-y-6 hidden">
+            <div class="flex justify-between items-center bg-cyber-card p-4 rounded-2xl cyber-border">
+                <h2 class="text-lg font-bold font-orbitron text-amber-400 flex items-center space-x-2">
+                    <i class="fa-solid fa-utensils"></i><span>Menu Makanan & Snack</span>
+                </h2>
+                <button onclick="playClickSound(); openCartModal()" class="px-4 py-2 bg-amber-500/20 border border-amber-500/50 text-amber-400 rounded-xl font-bold text-xs flex items-center space-x-2 hover:bg-amber-500 hover:text-cyber-bg transition shadow-lg">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span>Keranjang (<span id="cartCount">0</span>)</span>
+                </button>
+            </div>
+            <div id="makananGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+        </section>
+
+        <!-- TAB 4: MINUMAN CAFE -->
+        <section id="minumanTab" class="space-y-6 hidden">
+            <div class="flex justify-between items-center bg-cyber-card p-4 rounded-2xl cyber-border">
+                <h2 class="text-lg font-bold font-orbitron text-cyber-cyan flex items-center space-x-2">
+                    <i class="fa-solid fa-mug-hot"></i><span>Menu Minuman & Mocktail</span>
+                </h2>
+                <button onclick="playClickSound(); openCartModal()" class="px-4 py-2 bg-cyan-500/20 border border-cyan-500/50 text-cyber-cyan rounded-xl font-bold text-xs flex items-center space-x-2 hover:bg-cyan-500 hover:text-cyber-bg transition shadow-lg">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span>Keranjang (<span id="cartCountMinuman">0</span>)</span>
+                </button>
+            </div>
+            <div id="minumanGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+        </section>
+
+        <!-- TAB 5: CEK INVOICE -->
+        <section id="invoiceTab" class="space-y-6 hidden max-w-xl mx-auto">
+            <div class="cyber-border bg-cyber-card p-6 rounded-2xl shadow-2xl space-y-4 text-center">
+                <h2 class="text-lg font-bold font-orbitron text-cyber-cyan">Cek & Cetak Struk Transaksi</h2>
+                <p class="text-xs text-slate-400">Masukkan ID Transaksi atau Struk Anda untuk mencetak ulang atau melihat status.</p>
+                <div class="flex space-x-2">
+                    <input type="text" id="searchInvoiceId" placeholder="Contoh: INV-4921" class="cyber-input flex-1 p-3 rounded-xl text-sm uppercase">
+                    <button onclick="playClickSound(); searchInvoice()" class="px-5 py-3 bg-cyber-cyan text-cyber-bg font-bold font-orbitron rounded-xl text-xs hover:bg-cyan-400 transition">Cari</button>
+                </div>
+                <div id="invoiceResultContainer" class="hidden text-left pt-4"></div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-cyber-card border-t border-cyber-border py-4 px-6 text-center text-xs text-slate-500">
+        <p>&copy; 2026 DIGIDUL SKY - Cyberpunk Gaming Lounge & Cafe. All Rights Reserved.</p>
+    </footer>
+
+    <!-- MODAL: MEMBER LOGIN & PROFILE -->
+    <div id="memberModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="cyber-border bg-cyber-card w-full max-w-md p-6 rounded-2xl shadow-2xl space-y-4 relative">
+            <button onclick="playClickSound(); closeModal('memberModal')" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            <h3 class="font-orbitron font-bold text-base text-cyber-cyan flex items-center space-x-2">
+                <i class="fa-solid fa-user-shield"></i><span>Portal Member Digidul</span>
+            </h3>
+            <div id="memberDashboardArea">
+                <form onsubmit="handleMemberLogin(event)" class="space-y-3">
+                    <div>
+                        <label class="block text-xs uppercase font-semibold text-slate-400 mb-1">Username Member</label>
+                        <input type="text" id="memberNameInput" required placeholder="Cth: member1" class="cyber-input w-full p-3 rounded-xl text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase font-semibold text-slate-400 mb-1">PIN Member (4 Digit)</label>
+                        <input type="password" id="memberPinInput" required placeholder="Cth: 1234" class="cyber-input w-full p-3 rounded-xl text-sm">
+                    </div>
+                    <button type="submit" class="w-full py-3 bg-cyan-500 hover:bg-cyan-400 text-cyber-bg font-bold font-orbitron rounded-xl text-xs transition shadow-lg">Login Member</button>
+                </form>
+                <div class="mt-4 p-3 bg-cyber-bg rounded-xl border border-cyber-border text-[11px] text-slate-400">
+                    <p class="font-bold text-amber-400">Akun Member Demo:</p>
+                    <p>Username: <code class="text-cyan-300">member1</code> | PIN: <code class="text-cyan-300">1234</code> (Saldo awal Rp 50.000)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: OPERATOR LOGIN & DASHBOARD -->
+    <div id="operatorModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="cyber-border bg-cyber-card w-full max-w-4xl max-h-[90vh] overflow-y-auto p-6 rounded-2xl shadow-2xl relative">
+            <button onclick="playClickSound(); closeModal('operatorModal')" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            
+            <!-- Operator Login View -->
+            <div id="operatorLoginView" class="max-w-md mx-auto py-8 space-y-4 text-center">
+                <div class="w-16 h-16 rounded-2xl bg-rose-600/20 border border-rose-500/50 flex items-center justify-center text-rose-400 mx-auto text-2xl shadow-lg cyber-glow-pink">
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+                <h3 class="font-orbitron font-bold text-lg text-rose-400">Login Operator / Kasir</h3>
+                <p class="text-xs text-slate-400">Masukkan PIN Keamanan Kasir untuk mengakses panel kontrol.</p>
+                <form onsubmit="handleOperatorLogin(event)" class="space-y-3 pt-2">
+                    <input type="password" id="operatorPinInput" required placeholder="Masukkan PIN Kasir" class="cyber-input w-full p-3 rounded-xl text-center text-sm font-mono tracking-widest">
+                    <button type="submit" class="w-full py-3 bg-rose-600 hover:bg-rose-500 text-white font-bold font-orbitron rounded-xl text-xs transition shadow-lg">Buka Panel Kasir</button>
+                    <p id="operatorLoginError" class="hidden text-xs text-rose-400 font-bold">PIN salah, akses ditolak!</p>
+                </form>
+            </div>
+
+            <!-- Operator Dashboard View -->
+            <div id="operatorDashboardView" class="hidden space-y-6">
+                <div class="flex justify-between items-center border-b border-cyber-border pb-4 flex-wrap gap-3">
+                    <div>
+                        <h3 class="font-orbitron font-bold text-lg text-rose-400">Dashboard Kasir & Operator</h3>
+                        <p class="text-xs text-slate-400">Kelola transaksi, member, keuangan, dan absen shift.</p>
+                    </div>
+                    <button onclick="logoutOperator()" class="px-3 py-1.5 bg-rose-600/20 border border-rose-500/50 text-rose-400 hover:bg-rose-600 hover:text-white rounded-xl text-xs font-bold transition">Lock Kasir</button>
+                </div>
+
+                <!-- Sub Navigation Op -->
+                <div class="flex space-x-2 overflow-x-auto no-scrollbar">
+                    <button onclick="switchOpTab('opTrans')" id="btn-opTrans" class="px-3.5 py-2 bg-rose-600 text-white rounded-xl text-xs font-bold font-orbitron transition">Live Transaksi & Sesi</button>
+                    <button onclick="switchOpTab('opMember')" id="btn-opMember" class="px-3.5 py-2 bg-slate-800 text-slate-300 rounded-xl text-xs font-bold font-orbitron transition">Kelola Member</button>
+                    <button onclick="switchOpTab('opFinance')" id="btn-opFinance" class="px-3.5 py-2 bg-slate-800 text-slate-300 rounded-xl text-xs font-bold font-orbitron transition">Laporan Keuangan</button>
+                    <button onclick="switchOpTab('opAttendance')" id="btn-opAttendance" class="px-3.5 py-2 bg-slate-800 text-slate-300 rounded-xl text-xs font-bold font-orbitron transition">Absen & Shift Pegawai</button>
+                </div>
+
+                <!-- Tab 1: Live Transaksi -->
+                <div id="opTrans" class="space-y-4">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-900 text-slate-400 uppercase font-orbitron border-b border-slate-800">
+                                <tr>
+                                    <th class="p-3">Unit / ID</th>
+                                    <th class="p-3">Pemesan</th>
+                                    <th class="p-3">Layanan</th>
+                                    <th class="p-3">Durasi / Sisa</th>
+                                    <th class="p-3">Total</th>
+                                    <th class="p-3">Bayar</th>
+                                    <th class="p-3">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="opTransTableBody" class="divide-y divide-slate-800"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Tab 2: Kelola Member -->
+                <div id="opMember" class="hidden space-y-4">
+                    <form onsubmit="handleCreateMember(event)" class="grid grid-cols-1 sm:grid-cols-4 gap-3 bg-cyber-bg p-4 rounded-xl border border-cyber-border">
+                        <input type="text" id="newMemberUser" required placeholder="Username" class="cyber-input p-2.5 rounded-lg text-xs">
+                        <input type="text" id="newMemberPin" required placeholder="PIN (Cth: 1234)" class="cyber-input p-2.5 rounded-lg text-xs">
+                        <input type="text" id="newMemberName" required placeholder="Nama Lengkap" class="cyber-input p-2.5 rounded-lg text-xs">
+                        <button type="submit" class="py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg text-xs transition">Tambah Member</button>
+                    </form>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-900 text-slate-400 uppercase font-orbitron border-b border-slate-800">
+                                <tr>
+                                    <th class="p-2.5">Username</th>
+                                    <th class="p-2.5">Nama</th>
+                                    <th class="p-2.5">Saldo Billing</th>
+                                    <th class="p-2.5">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="opMemberListTableBody" class="divide-y divide-slate-800"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Tab 3: Laporan Keuangan -->
+                <div id="opFinance" class="hidden space-y-4">
+                    <div id="financeReportArea" class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                        <div class="bg-cyber-bg p-4 rounded-xl border border-slate-800">
+                            <p class="text-[10px] text-slate-400 uppercase font-bold">Pendapatan PC</p>
+                            <h4 id="repPcRev" class="font-orbitron font-bold text-cyber-cyan text-base">Rp 0</h4>
+                        </div>
+                        <div class="bg-cyber-bg p-4 rounded-xl border border-slate-800">
+                            <p class="text-[10px] text-slate-400 uppercase font-bold">Pendapatan Konsol</p>
+                            <h4 id="repConRev" class="font-orbitron font-bold text-cyber-pink text-base">Rp 0</h4>
+                        </div>
+                        <div class="bg-cyber-bg p-4 rounded-xl border border-slate-800">
+                            <p class="text-[10px] text-slate-400 uppercase font-bold">Pendapatan Cafe (FnB)</p>
+                            <h4 id="repFnbRev" class="font-orbitron font-bold text-amber-400 text-base">Rp 0</h4>
+                        </div>
+                        <div class="bg-cyber-bg p-4 rounded-xl border border-slate-800">
+                            <p class="text-[10px] text-slate-400 uppercase font-bold">Total Pendapatan</p>
+                            <h4 id="repTotalRev" class="font-orbitron font-bold text-emerald-400 text-base">Rp 0</h4>
+                        </div>
+                    </div>
+                    <div class="flex space-x-3 pt-2">
+                        <button onclick="exportToExcel()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition flex items-center space-x-2"><i class="fa-solid fa-file-excel"></i><span>Ekspor Excel</span></button>
+                        <button onclick="exportToPDF()" class="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-xs font-bold transition flex items-center space-x-2"><i class="fa-solid fa-file-pdf"></i><span>Ekspor PDF</span></button>
+                    </div>
+                </div>
+
+                <!-- Tab 4: Absen & Shift Pegawai (3 Shifts) -->
+                <div id="opAttendance" class="hidden space-y-4">
+                    <div class="flex justify-between items-center bg-cyber-bg p-4 rounded-xl border border-cyber-border flex-wrap gap-3">
+                        <div>
+                            <h4 class="font-bold text-sm text-white">Jadwal Shift & Absensi Operator (3 Shift)</h4>
+                            <p class="text-xs text-slate-400">Total Shift Bulan Ini: <span id="totalShiftCount" class="text-cyan-400 font-bold">0 Shift</span> | Estimasi Gaji: <span id="totalSalaryEstimate" class="text-emerald-400 font-bold">Rp 0</span></p>
+                        </div>
+                        <button onclick="addNewShift()" class="px-3 py-2 bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl text-xs font-bold transition">+ Tambah Jadwal Shift</button>
+                    </div>
+                    <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 text-xs space-y-1 text-slate-300">
+                        <p><b>Ketentuan Shift:</b></p>
+                        <p>• <b>Shift 1 (Pagi):</b> 08.00 - 16.00 (Upah: Rp 75.000)</p>
+                        <p>• <b>Shift 2 (Sore):</b> 16.00 - 00.00 (Upah: Rp 75.000)</p>
+                        <p>• <b>Shift 3 (Malam):</b> 00.00 - 08.00 (Upah: Rp 90.000 - Risiko Malam)</p>
+                    </div>
+                    <div id="shiftScheduleList" class="space-y-2"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: KERANJANG & CHECKOUT FNB -->
+    <div id="cartModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="cyber-border bg-cyber-card w-full max-w-md p-6 rounded-2xl shadow-2xl space-y-4 relative">
+            <button onclick="playClickSound(); closeModal('cartModal')" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            <h3 class="font-orbitron font-bold text-base text-amber-400 flex items-center space-x-2">
+                <i class="fa-solid fa-cart-shopping"></i><span>Keranjang Pesanan Cafe</span>
+            </h3>
+            <div id="cartItemsList" class="space-y-2 max-h-48 overflow-y-auto"></div>
+            <div class="border-t border-slate-800 pt-3 flex justify-between items-center text-sm font-bold">
+                <span>Total Pembayaran:</span>
+                <span id="cartTotalPrice" class="text-emerald-400 font-orbitron">Rp 0</span>
+            </div>
+            <div class="space-y-3 pt-2">
+                <div>
+                    <label class="block text-xs uppercase font-semibold text-slate-400 mb-1">Nomor Meja / Station PC</label>
+                    <input type="text" id="fnbTableNum" required placeholder="Contoh: VIP-01 atau Meja 4" class="cyber-input w-full p-3 rounded-xl text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs uppercase font-semibold text-slate-400 mb-1">Catatan / Level Pedas (Opsional)</label>
+                    <input type="text" id="fnbCheckoutNote" placeholder="Cth: Pedas Level 3, Tanpa Bawang, Es Sedikit" class="cyber-input w-full p-3 rounded-xl text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs uppercase font-semibold text-slate-400 mb-1">Metode Pembayaran</label>
+                    <select id="fnbPayment" onchange="togglePaymentProof('fnb')" class="cyber-input w-full p-3 rounded-xl text-sm">
+                        <option value="Cash">Cash di Kasir</option>
+                        <option value="QRIS">Scan QRIS Resmi</option>
+                    </select>
+                </div>
+                <div id="qrisContainerFnb" class="hidden bg-cyber-bg p-4 rounded-xl border border-cyber-border text-center space-y-2">
+                    <p class="text-xs text-slate-300">Scan QRIS untuk pembayaran instant:</p>
+                    <img src="https://gma-qris-prd.al-mp-id-p.cdn.gtflabs.io/G761272294/G761272294-0703A01-gma_branding-1794275776.png?response-content-disposition=attachment" alt="QRIS" class="mx-auto w-48 rounded-lg border border-cyber-cyan/40 bg-white p-2">
+                    <p class="text-[10px] text-amber-400">Pastikan nominal sesuai dengan total tagihan</p>
+                </div>
+                <button onclick="checkoutFnB()" class="w-full py-3 bg-amber-500 hover:bg-amber-400 text-cyber-bg font-bold font-orbitron rounded-xl text-xs transition shadow-lg">Kirim Pesanan Sekarang</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: CETAK STRUK INVOICE -->
+    <div id="invoiceModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="cyber-border bg-white text-slate-900 w-full max-w-sm p-6 rounded-2xl shadow-2xl space-y-4 relative">
+            <div id="printInvoiceContent" class="space-y-3 font-mono text-xs"></div>
+            <div class="flex space-x-2 pt-2">
+                <button onclick="printStruk()" class="flex-1 py-2.5 bg-slate-900 text-white font-bold rounded-xl text-xs">Cetak Struk (Print)</button>
+                <button onclick="closeModal('invoiceModal')" class="px-4 py-2.5 bg-slate-200 text-slate-800 font-bold rounded-xl text-xs">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playClickSound() {
+            try {
+                if (audioCtx.state === 'suspended') { audioCtx.resume(); }
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.1);
+            } catch(e) {}
+        }
+
+        function playSuccessSound() {
+            try {
+                if (audioCtx.state === 'suspended') { audioCtx.resume(); }
+                const now = audioCtx.currentTime;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, now);
+                osc.frequency.setValueAtTime(659.25, now + 0.12);
+                osc.frequency.setValueAtTime(783.99, now + 0.24);
+                osc.frequency.setValueAtTime(1046.50, now + 0.36);
+                gain.gain.setValueAtTime(0.6, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.7);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(now + 0.7);
+            } catch(e) {}
+        }
+
+        function speakPaymentSuccess(textMessage) {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(textMessage || "Pembayaran berhasil, silakan nikmati sesi Anda di Digidul Sky.");
+                utterance.lang = 'id-ID';
+                utterance.rate = 1.0;
+                utterance.pitch = 1.0;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        function updateWhatsAppLink(customMsg) {
+            const defaultMsg = "Halo Admin DIGIDUL SKY, saya ingin konfirmasi sewa station/order makanan.";
+            const msg = encodeURIComponent(customMsg || defaultMsg);
+            document.getElementById('waAdminBtn').href = `https://wa.me/6285882636393?text=${msg}`;
+        }
+
+        let pcUnits = {
+            Reguler: ['PC-01', 'PC-02', 'PC-03', 'PC-04', 'PC-05'],
+            VIP: ['VIP-01', 'VIP-02', 'VIP-03'],
+            VVIP: ['VVIP-01', 'VVIP-02'],
+            Sultan: ['SULTAN-01', 'SULTAN-02']
+        };
+
+        let consoleUnits = {
+            'Bronze': ['101', '102', '103'],
+            'Silver': ['201', '202', '203'],
+            'Gold': ['301', '302'],
+            'Diamond': ['Suite 1', 'Suite 2']
+        };
+
+        let activeSessions = JSON.parse(localStorage.getItem('digidul_sessions')) || [];
+        let transactions = JSON.parse(localStorage.getItem('digidul_transactions')) || [];
+        let members = JSON.parse(localStorage.getItem('digidul_members')) || [
+            { username: 'member1', pin: '1234', name: 'Ghani Member', balance: 50000 }
+        ];
+        let shifts = JSON.parse(localStorage.getItem('digidul_shifts')) || [
+            { id: 1, name: 'Karno', time: '08.00 - 16.00 (Shift 1 - Pagi)', status: 'Hadir' },
+            { id: 2, name: 'Trisno', time: '16.00 - 00.00 (Shift 2 - Sore)', status: 'Hadir' },
+            { id: 3, name: 'Devi', time: '00.00 - 08.00 (Shift 3 - Malam)', status: 'Hadir' }
+        ];
+        let loggedInMember = JSON.parse(localStorage.getItem('digidul_logged_member')) || null;
+        let cart = [];
+
+        const fnbMakanan = [
+            { id: 'm1', name: 'Indomie Goreng Special', price: 10000, img: 'https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?auto=format&fit=crop&w=300&q=80', addons: [{name: 'Extra Telur', price: 4000}, {name: 'Extra Keju', price: 3000}] },
+            { id: 'm2', name: 'Nasi Goreng Cyber', price: 15000, img: 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?auto=format&fit=crop&w=300&q=80', addons: [{name: 'Extra Telur Mata Sapi', price: 4000}, {name: 'Kerupuk Udang', price: 2000}] },
+            { id: 'm3', name: 'Kentang Goreng Fries', price: 12000, img: 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=300&q=80', addons: [{name: 'Saus Keju Melt', price: 4000}, {name: 'Mayonaise Extra', price: 2000}] },
+            { id: 'm4', name: 'Roti Bakar Coklat Keju', price: 12000, img: 'https://images.unsplash.com/photo-1584776296944-ab6fb57b0bdd?auto=format&fit=crop&w=300&q=80', addons: [{name: 'Extra Keju Cheddar', price: 3000}, {name: 'Extra Susu Coklat', price: 2000}] }
+        ];
+
+        const fnbMinuman = [
+            { id: 'd1', name: 'Es Teh Manis Segar', price: 5000, img: 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=300&q=80', addons: [{name: 'Less Sugar', price: 0}, {name: 'Extra Es Batu', price: 1000}] },
+            { id: 'd2', name: 'Kopi Hitam Robusta', price: 7000, img: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=300&q=80', addons: [{name: 'Extra Gula Aren', price: 2000}, {name: 'Kental Manis', price: 1000}] },
+            { id: 'd3', name: 'Milkshake Chocolate', price: 15000, img: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=300&q=80', addons: [{name: 'Extra Whipped Cream', price: 4000}, {name: 'Topping Choco Chips', price: 3000}] },
+            { id: 'd4', name: 'Ice Lemon Tea', price: 8000, img: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=300&q=80', addons: [{name: 'Extra Lemon Slice', price: 2000}, {name: 'Less Sugar', price: 0}] }
+        ];
+
+        window.onload = function() {
+            updateWhatsAppLink();
+            updatePCList();
+            updateConsoleUnitList();
+            renderLivePCs();
+            renderLiveConsoles();
+            renderFnBMakanan();
+            renderFnBMinuman();
+            calculatePCTotal();
+            calculateConTotal();
+            checkLoggedMemberState();
+        };
+
+        function checkLoggedMemberState() {
+            const badge = document.getElementById('headerMemberBadge');
+            const loginBtn = document.getElementById('headerMemberLoginBtn');
+            const pcNameInput = document.getElementById('pcName');
+            const conNameInput = document.getElementById('conName');
+
+            if (loggedInMember) {
+                const currentMember = members.find(m => m.username === loggedInMember.username);
+                if(currentMember) {
+                    loggedInMember = currentMember;
+                    localStorage.setItem('digidul_logged_member', JSON.stringify(loggedInMember));
+                }
+
+                badge.classList.remove('hidden');
+                badge.classList.add('flex');
+                loginBtn.classList.add('hidden');
+                document.getElementById('headerMemberNameDisplay').innerText = loggedInMember.name;
+
+                if(pcNameInput) {
+                    pcNameInput.value = loggedInMember.name;
+                    pcNameInput.setAttribute('readonly', true);
+                    pcNameInput.classList.add('bg-slate-950', 'text-cyan-400');
+                }
+                if(conNameInput) {
+                    conNameInput.value = loggedInMember.name;
+                    conNameInput.setAttribute('readonly', true);
+                    conNameInput.classList.add('bg-slate-950', 'text-pink-400');
+                }
+
+                updatePaymentOptionsWithMemberBalance();
+            } else {
+                badge.classList.add('hidden');
+                badge.classList.remove('flex');
+                loginBtn.classList.remove('hidden');
+
+                if(pcNameInput) {
+                    pcNameInput.removeAttribute('readonly');
+                    pcNameInput.classList.remove('bg-slate-950', 'text-cyan-400');
+                }
+                if(conNameInput) {
+                    conNameInput.removeAttribute('readonly');
+                    conNameInput.classList.remove('bg-slate-950', 'text-pink-400');
+                }
+
+                updatePaymentOptionsWithMemberBalance();
+            }
+        }
+
+        function updatePaymentOptionsWithMemberBalance() {
+            ['pcPayment', 'conPayment', 'fnbPayment'].forEach(selectId => {
+                const select = document.getElementById(selectId);
+                if(!select) return;
+
+                const currentVal = select.value;
+                select.innerHTML = `
+                    <option value="Cash">Cash di Kasir</option>
+                    <option value="QRIS">Scan QRIS Resmi</option>
+                `;
+
+                if(loggedInMember) {
+                    const opt = document.createElement('option');
+                    opt.value = "MemberBalance";
+                    opt.textContent = `Saldo Billing Member (Sisa: Rp ${(loggedInMember.balance || 0).toLocaleString('id-ID')})`;
+                    select.appendChild(opt);
+                }
+
+                if(currentVal && currentVal !== "MemberBalance") {
+                    select.value = currentVal;
+                } else if(!loggedInMember) {
+                    select.value = "Cash";
+                }
+            });
+        }
+
+        function logoutMember() {
+            playClickSound();
+            loggedInMember = null;
+            localStorage.removeItem('digidul_logged_member');
+            
+            const pcNameInput = document.getElementById('pcName');
+            if (pcNameInput) {
+                pcNameInput.value = '';
+                pcNameInput.removeAttribute('readonly');
+                pcNameInput.classList.remove('bg-slate-950', 'text-cyan-400');
+            }
+            const conNameInput = document.getElementById('conName');
+            if (conNameInput) {
+                conNameInput.value = '';
+                conNameInput.removeAttribute('readonly');
+                conNameInput.classList.remove('bg-slate-950', 'text-pink-400');
+            }
+
+            const area = document.getElementById('memberDashboardArea');
+            if(area) {
+                area.innerHTML = `
+                    <form onsubmit="handleMemberLogin(event)" class="space-y-3">
+                        <div>
+                            <label class="block text-xs uppercase font-semibold text-slate-400 mb-1">Username Member</label>
+                            <input type="text" id="memberNameInput" required placeholder="Cth: member1" class="cyber-input w-full p-3 rounded-xl text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase font-semibold text-slate-400 mb-1">PIN Member (4 Digit)</label>
+                            <input type="password" id="memberPinInput" required placeholder="Cth: 1234" class="cyber-input w-full p-3 rounded-xl text-sm">
+                        </div>
+                        <button type="submit" class="w-full py-3 bg-cyan-500 hover:bg-cyan-400 text-cyber-bg font-bold font-orbitron rounded-xl text-xs transition shadow-lg">Login Member</button>
+                    </form>
+                    <div class="mt-4 p-3 bg-cyber-bg rounded-xl border border-cyber-border text-[11px] text-slate-400">
+                        <p class="font-bold text-amber-400">Akun Member Demo:</p>
+                        <p>Username: <code class="text-cyan-300">member1</code> | PIN: <code class="text-cyan-300">1234</code> (Saldo awal Rp 50.000)</p>
+                    </div>
+                `;
+            }
+
+            checkLoggedMemberState();
+            alert("Berhasil logout dari akun member.");
+        }
+
+        function switchTab(tabId) {
+            ['bookingTab', 'consoleTab', 'makananTab', 'minumanTab', 'invoiceTab'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+                document.getElementById('btn-' + id).classList.remove('active', 'bg-gradient-to-r', 'from-cyan-500', 'to-blue-600', 'text-cyber-bg');
+                document.getElementById('btn-' + id).classList.add('text-slate-400');
+            });
+            document.getElementById(tabId).classList.remove('hidden');
+            const activeBtn = document.getElementById('btn-' + tabId);
+            activeBtn.classList.add('active', 'bg-gradient-to-r', 'from-cyan-500', 'to-blue-600', 'text-cyber-bg');
+            activeBtn.classList.remove('text-slate-400');
+        }
+
+        function switchOpTab(tabId) {
+            playClickSound();
+            ['opTrans', 'opMember', 'opFinance', 'opAttendance'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+                document.getElementById('btn-' + id).classList.remove('bg-rose-600', 'text-white');
+                document.getElementById('btn-' + id).classList.add('bg-slate-800', 'text-slate-300');
+            });
+            document.getElementById(tabId).classList.remove('hidden');
+            document.getElementById('btn-' + tabId).classList.add('bg-rose-600', 'text-white');
+            document.getElementById('btn-' + tabId).classList.remove('bg-slate-800', 'text-slate-300');
+            if(tabId === 'opFinance') updateFinanceReport();
+            if(tabId === 'opTrans') renderOperatorTransactions();
+            if(tabId === 'opMember') renderOperatorMemberList();
+            if(tabId === 'opAttendance') renderShiftSchedule();
+        }
+
+        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+        function updatePCList() {
+            const cat = document.getElementById('pcCategory').value;
+            const unitSelect = document.getElementById('pcUnit');
+            unitSelect.innerHTML = '';
+            pcUnits[cat].forEach(unit => {
+                const opt = document.createElement('option');
+                opt.value = unit; opt.textContent = unit;
+                unitSelect.appendChild(opt);
+            });
+            calculatePCTotal();
+        }
+
+        function calculatePCTotal() {
+            const cat = document.getElementById('pcCategory').value;
+            const duration = parseFloat(document.getElementById('pcDuration').value) || 1;
+            let rate = cat === 'Reguler' ? 5000 : (cat === 'VIP' ? 8000 : (cat === 'VVIP' ? 12000 : 20000));
+            document.getElementById('pcTotalDisplay').textContent = 'Rp ' + (rate * duration).toLocaleString('id-ID');
+        }
+
+        function togglePaymentProof(type) {
+            if(type === 'pc') {
+                const pay = document.getElementById('pcPayment').value;
+                const qris = document.getElementById('qrisContainer');
+                if(pay === 'QRIS') qris.classList.remove('hidden');
+                else qris.classList.add('hidden');
+            } else if(type === 'con') {
+                const pay = document.getElementById('conPayment').value;
+                const qris = document.getElementById('qrisContainerCon');
+                if(pay === 'QRIS') qris.classList.remove('hidden');
+                else qris.classList.add('hidden');
+            } else if(type === 'fnb') {
+                const pay = document.getElementById('fnbPayment').value;
+                const qris = document.getElementById('qrisContainerFnb');
+                if(pay === 'QRIS') qris.classList.remove('hidden');
+                else qris.classList.add('hidden');
+            }
+        }
+
+        function submitPCBooking(e) {
+            e.preventDefault();
+            const name = document.getElementById('pcName').value;
+            const cat = document.getElementById('pcCategory').value;
+            const unit = document.getElementById('pcUnit').value;
+            const duration = parseFloat(document.getElementById('pcDuration').value);
+            const payment = document.getElementById('pcPayment').value;
+            let rate = cat === 'Reguler' ? 5000 : (cat === 'VIP' ? 8000 : (cat === 'VVIP' ? 12000 : 20000));
+            const total = rate * duration;
+
+            if(payment === 'MemberBalance') {
+                if(!loggedInMember) return alert("Silakan login member terlebih dahulu!");
+                if((loggedInMember.balance || 0) < total) {
+                    return alert(`Saldo billing member tidak cukup! Saldo Anda: Rp ${(loggedInMember.balance || 0).toLocaleString('id-ID')}, Tagihan: Rp ${total.toLocaleString('id-ID')}`);
+                }
+                loggedInMember.balance -= total;
+                const mIndex = members.findIndex(m => m.username === loggedInMember.username);
+                if(mIndex !== -1) {
+                    members[mIndex].balance = loggedInMember.balance;
+                }
+                localStorage.setItem('digidul_members', JSON.stringify(members));
+                localStorage.setItem('digidul_logged_member', JSON.stringify(loggedInMember));
+                checkLoggedMemberState();
+            }
+
+            playSuccessSound();
+            const invId = 'INV-' + Math.floor(1000 + Math.random() * 9000);
+            const newSession = {
+                id: invId, type: 'PC', category: cat, unit: unit, name: name, duration: duration, total: total, payment: payment,
+                startTime: new Date().getTime(), endTime: new Date().getTime() + (duration * 3600000), status: 'Aktif'
+            };
+
+            activeSessions.push(newSession);
+            transactions.push(newSession);
+            localStorage.setItem('digidul_sessions', JSON.stringify(activeSessions));
+            localStorage.setItem('digidul_transactions', JSON.stringify(transactions));
+
+            updateWhatsAppLink(`Halo Admin Digidul Sky, saya ${name} telah booking unit ${unit} (${cat}) selama ${duration} jam dengan ID Transaksi ${invId}. Total bayar Rp ${total.toLocaleString('id-ID')} via ${payment}.`);
+            speakPaymentSuccess(`Booking station ${unit} berhasil. Total tagihan ${total.toLocaleString('id-ID')} rupiah.`);
+
+            alert(`Booking ${unit} Berhasil! ID Transaksi: ${invId}`);
+            document.getElementById('pcBookingForm').reset();
+            document.getElementById('qrisContainer').classList.add('hidden');
+            if(loggedInMember) {
+                document.getElementById('pcName').value = loggedInMember.name;
+            }
+            updatePCList();
+            renderLivePCs();
+        }
+
+        function renderLivePCs() {
+            ['Reguler', 'VIP', 'VVIP', 'Sultan'].forEach(cat => {
+                const gridId = cat === 'Reguler' ? 'gridReguler' : (cat === 'VIP' ? 'gridVip' : (cat === 'VVIP' ? 'gridVvip' : 'gridSultan'));
+                const container = document.getElementById(gridId);
+                if(!container) return;
+                container.innerHTML = '';
+
+                pcUnits[cat].forEach(unit => {
+                    const session = activeSessions.find(s => s.unit === unit && s.status === 'Aktif');
+                    const isUsed = !!session;
+                    let cardClass = isUsed ? 'bg-rose-950/40 border-rose-500/60' : (cat === 'Sultan' ? 'bg-amber-950/20 border-amber-500/40' : 'bg-slate-900/60 border-slate-700');
+
+                    let specDesc = '';
+                    if(cat === 'Sultan') specDesc = `<div class="text-[9px] text-amber-300 font-mono text-right">Ryzen 9 9950X3D | RTX 5090 | 128GB RAM | 540Hz QD-OLED</div>`;
+                    else if(cat === 'VVIP') specDesc = `<div class="text-[9px] text-cyan-300 font-mono text-right">i9 14900KS | RTX 4090 | 96GB RAM | 360Hz Mini-LED</div>`;
+                    else if(cat === 'VIP') specDesc = `<div class="text-[9px] text-slate-300 font-mono text-right">i7 14700KF | RTX 4070 Ti S | 64GB RAM | 280Hz IPS</div>`;
+                    else specDesc = `<div class="text-[9px] text-slate-400 font-mono text-right">i5 14400F | RTX 4060 Ti | 32GB RAM | 240Hz IPS</div>`;
+
+                    container.innerHTML += `
+                        <div class="cyber-border p-3.5 rounded-xl ${cardClass} flex flex-col justify-between transition">
+                            <div class="flex justify-between items-center">
+                                <span class="font-bold font-orbitron text-sm ${cat === 'Sultan' ? 'text-amber-400' : ''}">${unit}</span>
+                                <span class="w-2.5 h-2.5 rounded-full ${isUsed ? 'bg-rose-500 animate-pulse' : 'bg-emerald-500'}"></span>
+                            </div>
+                            <div class="my-2.5 text-xs">
+                                ${isUsed ? `<span class="text-rose-400 font-bold">${session.name}</span>` : '<span class="text-emerald-400 font-semibold">Tersedia</span>'}
+                            </div>
+                            ${specDesc}
+                        </div>
+                    `;
+                });
+            });
+        }
+
+        function stopSession(unit) {
+            playClickSound();
+            activeSessions = activeSessions.map(s => s.unit === unit ? {...s, status: 'Selesai'} : s);
+            localStorage.setItem('digidul_sessions', JSON.stringify(activeSessions));
+            renderLivePCs();
+            renderLiveConsoles();
+            alert(`Sesi untuk unit ${unit} telah dihentikan oleh operator.`);
+        }
+
+        function updateConsoleUnitList() {
+            const type = document.getElementById('conType').value;
+            const select = document.getElementById('conUnit');
+            select.innerHTML = '';
+            consoleUnits[type].forEach(u => {
+                const opt = document.createElement('option');
+                opt.value = u; opt.textContent = u;
+                select.appendChild(opt);
+            });
+            calculateConTotal();
+        }
+
+        function calculateConTotal() {
+            const type = document.getElementById('conType').value;
+            const duration = parseFloat(document.getElementById('conDuration').value) || 1;
+            let rate = type === 'Silver' ? 15000 : (type === 'Gold' ? 25000 : (type === 'Diamond' ? 45000 : 10000));
+            document.getElementById('conTotalDisplay').textContent = 'Rp ' + (rate * duration).toLocaleString('id-ID');
+        }
+
+        function submitConsoleBooking(e) {
+            e.preventDefault();
+            const name = document.getElementById('conName').value;
+            const type = document.getElementById('conType').value;
+            const unit = document.getElementById('conUnit').value;
+            const duration = parseFloat(document.getElementById('conDuration').value);
+            const payment = document.getElementById('conPayment').value;
+            let rate = type === 'Silver' ? 15000 : (type === 'Gold' ? 25000 : (type === 'Diamond' ? 45000 : 10000));
+            const total = rate * duration;
+
+            if(payment === 'MemberBalance') {
+                if(!loggedInMember) return alert("Silakan login member terlebih dahulu!");
+                if((loggedInMember.balance || 0) < total) {
+                    return alert(`Saldo billing member tidak cukup! Saldo Anda: Rp ${(loggedInMember.balance || 0).toLocaleString('id-ID')}, Tagihan: Rp ${total.toLocaleString('id-ID')}`);
+                }
+                loggedInMember.balance -= total;
+                const mIndex = members.findIndex(m => m.username === loggedInMember.username);
+                if(mIndex !== -1) {
+                    members[mIndex].balance = loggedInMember.balance;
+                }
+                localStorage.setItem('digidul_members', JSON.stringify(members));
+                localStorage.setItem('digidul_logged_member', JSON.stringify(loggedInMember));
+                checkLoggedMemberState();
+            }
+
+            playSuccessSound();
+            const invId = 'INV-' + Math.floor(1000 + Math.random() * 9000);
+            const newSession = {
+                id: invId, type: 'Konsol', category: type, unit: unit, name: name, duration: duration, total: total, payment: payment,
+                startTime: new Date().getTime(), endTime: new Date().getTime() + (duration * 3600000), status: 'Aktif'
+            };
+
+            activeSessions.push(newSession);
+            transactions.push(newSession);
+            localStorage.setItem('digidul_sessions', JSON.stringify(activeSessions));
+            localStorage.setItem('digidul_transactions', JSON.stringify(transactions));
+
+            updateWhatsAppLink(`Halo Admin Digidul Sky, saya ${name} sewa konsol ${unit} (${type}) selama ${duration} jam dengan ID Transaksi ${invId}. Total bayar Rp ${total.toLocaleString('id-ID')} via ${payment}.`);
+            speakPaymentSuccess(`Sewa konsol ${unit} berhasil. Total tagihan ${total.toLocaleString('id-ID')} rupiah.`);
+
+            alert(`Sewa Konsol ${unit} Berhasil! ID Transaksi: ${invId}`);
+            document.getElementById('consoleBookingForm').reset();
+            document.getElementById('qrisContainerCon').classList.add('hidden');
+            if(loggedInMember) {
+                document.getElementById('conName').value = loggedInMember.name;
+            }
+            updateConsoleUnitList();
+            renderLiveConsoles();
+        }
+
+        function renderLiveConsoles() {
+            const container = document.getElementById('gridConsole');
+            if(!container) return;
+            container.innerHTML = '';
+
+            Object.keys(consoleUnits).forEach(type => {
+                consoleUnits[type].forEach(unit => {
+                    const session = activeSessions.find(s => s.unit === unit && s.status === 'Aktif');
+                    const isUsed = !!session;
+                    let isDiamond = type === 'Diamond';
+                    let isGold = type === 'Gold';
+                    let cardClass = isUsed ? 'bg-pink-950/40 border-pink-500/60' : (isDiamond ? 'bg-amber-950/20 border-amber-500/40' : 'bg-slate-900/60 border-slate-700');
+
+                    let perkDesc = '';
+                    if(isDiamond) perkDesc = `<div class="text-[9px] text-amber-300 font-mono text-right">Suite ${unit}: PS5 Pro 8K + Sonos Arc Ultra-Clear Speakers + Pro Racing Rig + NSW OLED + Free Netflix 4K</div>`;
+                    else if(isGold) perkDesc = `<div class="text-[9px] text-cyan-300 font-mono text-right">Ruangan ${unit}: PS5 Pro 2TB + DualSense Edge + Dolby Atmos + Free Netflix 4K</div>`;
+                    else if(type === 'Silver') perkDesc = `<div class="text-[9px] text-slate-300 font-mono text-right">Ruangan ${unit}: Nintendo Switch OLED SE + Pro Controller + 75" 4K QLED</div>`;
+                    else perkDesc = `<div class="text-[9px] text-slate-400 font-mono text-right">Ruangan ${unit}: PS4 Pro SSD 1TB + DualShock 4 Custom + 4K HDR TV</div>`;
+
+                    container.innerHTML += `
+                        <div class="cyber-border p-3.5 rounded-xl ${cardClass} flex flex-col justify-between">
+                            <div class="flex justify-between items-center">
+                                <span class="font-bold font-orbitron text-sm ${isDiamond ? 'text-amber-400' : 'text-pink-400'}">${unit} (${type})</span>
+                                <span class="w-2.5 h-2.5 rounded-full ${isUsed ? 'bg-pink-500 animate-pulse' : 'bg-emerald-500'}"></span>
+                            </div>
+                            <div class="my-2.5 text-xs">
+                                ${isUsed ? `<b class="text-white">${session.name}</b>` : '<span class="text-emerald-400 font-semibold">Tersedia</span>'}
+                            </div>
+                            ${perkDesc}
+                        </div>
+                    `;
+                });
+            });
+        }
+
+        function renderFnBMakanan() {
+            const grid = document.getElementById('makananGrid');
+            grid.innerHTML = '';
+            fnbMakanan.forEach(item => {
+                let addonsHtml = item.addons.map((addon) => `<label class="flex items-center justify-between text-[11px] text-slate-300"><span class="flex items-center space-x-1"><input type="checkbox" data-price="${addon.price}" value="${addon.name}" class="addon-chk-${item.id} accent-amber-500"><span>${addon.name}</span></span><span class="text-amber-400 font-mono">+Rp ${addon.price.toLocaleString('id-ID')}</span></label>`).join('');
+                grid.innerHTML += `
+                    <div class="cyber-border bg-cyber-card p-4 rounded-2xl flex flex-col justify-between space-y-3 shadow-lg">
+                        <img src="${item.img}" alt="${item.name}" class="w-full h-36 object-cover rounded-xl border border-slate-700">
+                        <div>
+                            <h4 class="font-bold text-sm text-white">${item.name}</h4>
+                            <p class="text-xs text-amber-400 font-orbitron font-bold">Rp ${item.price.toLocaleString('id-ID')}</p>
+                        </div>
+                        <div class="space-y-1.5 bg-slate-900/80 p-2.5 rounded-xl border border-slate-800">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase">Pilih Add-on:</span>
+                            ${addonsHtml}
+                        </div>
+                        <button onclick="playClickSound(); addToCartWithAddons('${item.id}', 'makanan')" class="w-full py-2.5 bg-amber-500/20 border border-amber-500/50 hover:bg-amber-500 hover:text-cyber-bg text-amber-400 rounded-xl text-xs font-bold transition shadow-md">
+                            + Tambah ke Keranjang
+                        </button>
+                    </div>
+                `;
+            });
+        }
+
+        function renderFnBMinuman() {
+            const grid = document.getElementById('minumanGrid');
+            grid.innerHTML = '';
+            fnbMinuman.forEach(item => {
+                let addonsHtml = item.addons.map((addon) => `<label class="flex items-center justify-between text-[11px] text-slate-300"><span class="flex items-center space-x-1"><input type="checkbox" data-price="${addon.price}" value="${addon.name}" class="addon-chk-${item.id} accent-cyan-400"><span>${addon.name}</span></span><span class="text-cyan-400 font-mono">${addon.price > 0 ? '+Rp ' + addon.price.toLocaleString('id-ID') : 'Free'}</span></label>`).join('');
+                grid.innerHTML += `
+                    <div class="cyber-border bg-cyber-card p-4 rounded-2xl flex flex-col justify-between space-y-3 shadow-lg">
+                        <img src="${item.img}" alt="${item.name}" class="w-full h-36 object-cover rounded-xl border border-slate-700">
+                        <div>
+                            <h4 class="font-bold text-sm text-white">${item.name}</h4>
+                            <p class="text-xs text-cyan-400 font-orbitron font-bold">Rp ${item.price.toLocaleString('id-ID')}</p>
+                        </div>
+                        <div class="space-y-1.5 bg-slate-900/80 p-2.5 rounded-xl border border-slate-800">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase">Pilih Add-on:</span>
+                            ${addonsHtml}
+                        </div>
+                        <button onclick="playClickSound(); addToCartWithAddons('${item.id}', 'minuman')" class="w-full py-2.5 bg-cyan-500/20 border border-cyan-500/50 hover:bg-cyan-500 hover:text-cyber-bg text-cyan-400 rounded-xl text-xs font-bold transition shadow-md">
+                            + Tambah ke Keranjang
+                        </button>
+                    </div>
+                `;
+            });
+        }
+
+        function addToCartWithAddons(id, type) {
+            const item = type === 'makanan' ? fnbMakanan.find(i => i.id === id) : fnbMinuman.find(i => i.id === id);
+            const checkboxes = document.querySelectorAll(`.addon-chk-${id}:checked`);
+            
+            let selectedAddons = [];
+            let addonTotalPrice = 0;
+            checkboxes.forEach(cb => {
+                selectedAddons.push(cb.value);
+                addonTotalPrice += parseInt(cb.getAttribute('data-price')) || 0;
+            });
+
+            let finalUnitPrice = item.price + addonTotalPrice;
+            let cartItemKey = id + '-' + selectedAddons.sort().join(',');
+            const existing = cart.find(c => c.cartKey === cartItemKey);
+
+            if(existing) {
+                existing.qty++;
+            } else {
+                cart.push({ ...item, price: finalUnitPrice, baseName: item.name, cartKey: cartItemKey, selectedAddons, qty: 1 });
+            }
+            updateCartUI();
+            alert(`${item.name} ditambahkan ke keranjang!`);
+        }
+
+        function updateCartUI() {
+            const totalQty = cart.reduce((sum, i) => sum + i.qty, 0);
+            document.getElementById('cartCount').innerText = totalQty;
+            document.getElementById('cartCountMinuman').innerText = totalQty;
+
+            const list = document.getElementById('cartItemsList');
+            list.innerHTML = '';
+            let totalPrice = 0;
+
+            cart.forEach(item => {
+                totalPrice += item.price * item.qty;
+                let addonsText = item.selectedAddons.length > 0 ? `<div class="text-[10px] text-amber-300">Add-on: ${item.selectedAddons.join(', ')}</div>` : '';
+                list.innerHTML += `
+                    <div class="flex justify-between items-center text-xs bg-slate-900 p-2.5 rounded-xl border border-slate-800">
+                        <div>
+                            <div class="font-bold text-white">${item.name}</div>
+                            ${addonsText}
+                            <div class="text-slate-400">Rp ${item.price.toLocaleString('id-ID')} x ${item.qty}</div>
+                        </div>
+                        <button onclick="playClickSound(); removeFromCart('${item.cartKey}')" class="text-rose-400 hover:text-rose-300 p-1"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                `;
+            });
+            document.getElementById('cartTotalPrice').innerText = 'Rp ' + totalPrice.toLocaleString('id-ID');
+        }
+
+        function removeFromCart(cartKey) {
+            cart = cart.filter(i => i.cartKey !== cartKey);
+            updateCartUI();
+        }
+
+        function openCartModal() {
+            if(cart.length === 0) return alert("Keranjang masih kosong!");
+            openModal('cartModal');
+        }
+
+        function checkoutFnB() {
+            playSuccessSound();
+            const table = document.getElementById('fnbTableNum').value;
+            if(!table) return alert("Masukkan nomor meja/PC Anda!");
+            const checkoutNote = document.getElementById('fnbCheckoutNote').value.trim();
+            const payment = document.getElementById('fnbPayment').value;
+            let total = cart.reduce((sum, i) => sum + (i.price * i.qty), 0);
+            const invId = 'INV-FNB-' + Math.floor(1000 + Math.random() * 9000);
+
+            let finalCartItems = [...cart];
+            if (checkoutNote) {
+                finalCartItems.push({ name: 'Catatan Pesanan: ' + checkoutNote, price: 0, qty: 1, selectedAddons: [] });
+            }
+
+            const tx = { id: invId, type: 'FnB', category: 'Makanan/Minuman', unit: table, name: 'Pesanan FnB (' + table + ')', duration: 1, total: total, payment: payment, status: 'Selesai', items: finalCartItems };
+            transactions.push(tx);
+            localStorage.setItem('digidul_transactions', JSON.stringify(transactions));
+
+            updateWhatsAppLink(`Halo Admin Digidul Sky, saya memesan FnB untuk meja ${table} ${checkoutNote ? '(Catatan: ' + checkoutNote + ')' : ''} dengan ID Transaksi ${invId}. Total bayar Rp ${total.toLocaleString('id-ID')} via ${payment}.`);
+            speakPaymentSuccess(`Pesanan FnB berhasil. Total tagihan ${total.toLocaleString('id-ID')} rupiah.`);
+
+            alert(`Pesanan FnB Berhasil! ID Transaksi: ${invId}`);
+            cart = [];
+            document.getElementById('fnbCheckoutNote').value = '';
+            document.getElementById('qrisContainerFnb').classList.add('hidden');
+            updateCartUI();
+            closeModal('cartModal');
+        }
+
+        function searchInvoice() {
+            const q = document.getElementById('searchInvoiceId').value.trim();
+            const tx = transactions.find(t => t.id.toLowerCase() === q.toLowerCase());
+            const container = document.getElementById('invoiceResultContainer');
+            container.classList.remove('hidden');
+
+            if(!tx) {
+                container.innerHTML = `<p class="text-xs text-rose-400">Invoice tidak ditemukan.</p>`;
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-2.5 text-xs">
+                    <div class="flex justify-between font-bold text-cyber-cyan border-b border-slate-800 pb-2">
+                        <span>DIGIDUL SKY INVOICE</span>
+                        <span>${tx.id}</span>
+                    </div>
+                    <div class="flex justify-between"><span>Nama / Meja:</span><span class="text-white font-bold">${tx.name} (${tx.unit})</span></div>
+                    <div class="flex justify-between"><span>Layanan:</span><span class="text-white">${tx.type} - ${tx.category}</span></div>
+                    <div class="flex justify-between"><span>Metode Bayar:</span><span class="text-white">${tx.payment}</span></div>
+                    <div class="flex justify-between border-t border-slate-800 pt-2 font-bold text-emerald-400 text-sm">
+                        <span>Total:</span><span>Rp ${tx.total.toLocaleString('id-ID')}</span>
+                    </div>
+                    <button onclick="playClickSound(); printSpecificInvoice('${tx.id}')" class="w-full mt-2 py-2.5 bg-cyber-cyan text-cyber-bg font-bold rounded-xl shadow-lg">Cetak Struk</button>
+                </div>
+            `;
+        }
+
+        function printSpecificInvoice(id) {
+            const tx = transactions.find(t => t.id === id);
+            if(!tx) return;
+            document.getElementById('printInvoiceContent').innerHTML = `
+                <div class="text-center space-y-1">
+                    <h3 class="font-bold text-base font-orbitron text-cyan-400">DIGIDUL SKY</h3>
+                    <p class="text-[10px] text-slate-400">Admin WA: 085882636393</p>
+                </div>
+                <div class="border-t border-b border-slate-700 py-2 space-y-1.5 text-xs">
+                    <div class="flex justify-between"><span>ID Struk:</span><b>${tx.id}</b></div>
+                    <div class="flex justify-between"><span>Pemesan:</span><b>${tx.name}</b></div>
+                    <div class="flex justify-between"><span>Unit/Meja:</span><b>${tx.unit}</b></div>
+                    <div class="flex justify-between"><span>Layanan:</span><b>${tx.type} (${tx.category})</b></div>
+                </div>
+                <div class="flex justify-between font-bold text-sm text-emerald-400 pt-1">
+                    <span>Total Bayar:</span><span>Rp ${tx.total.toLocaleString('id-ID')}</span>
+                </div>
+            `;
+            openModal('invoiceModal');
+        }
+
+        function printStruk() { window.print(); }
+
+        function handleOperatorLogin(e) {
+            e.preventDefault();
+            const pin = document.getElementById('operatorPinInput').value;
+            const errBox = document.getElementById('operatorLoginError');
+            if(pin === 'kkaghani') {
+                playSuccessSound();
+                errBox.classList.add('hidden');
+                document.getElementById('operatorLoginView').classList.add('hidden');
+                document.getElementById('operatorDashboardView').classList.remove('hidden');
+                renderOperatorTransactions();
+                renderOperatorMemberList();
+            } else {
+                playClickSound();
+                errBox.classList.remove('hidden');
+            }
+        }
+
+        function logoutOperator() {
+            playClickSound();
+            document.getElementById('operatorLoginView').classList.remove('hidden');
+            document.getElementById('operatorDashboardView').classList.add('hidden');
+            document.getElementById('operatorPinInput').value = '';
+            document.getElementById('operatorLoginError').classList.add('hidden');
+        }
+
+        function handleCreateMember(e) {
+            e.preventDefault();
+            playSuccessSound();
+            const username = document.getElementById('newMemberUser').value.trim();
+            const pin = document.getElementById('newMemberPin').value.trim();
+            const name = document.getElementById('newMemberName').value.trim();
+
+            if(members.some(m => m.username === username)) {
+                alert("Username member sudah terdaftar!");
+                return;
+            }
+
+            members.push({ username, pin, name, balance: 0 });
+            localStorage.setItem('digidul_members', JSON.stringify(members));
+            alert(`Member ${name} (${username}) berhasil didaftarkan!`);
+            document.getElementById('newMemberUser').value = '';
+            document.getElementById('newMemberPin').value = '';
+            document.getElementById('newMemberName').value = '';
+            renderOperatorMemberList();
+        }
+
+        function renderOperatorMemberList() {
+            const tbody = document.getElementById('opMemberListTableBody');
+            tbody.innerHTML = '';
+            if(members.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="p-3 text-center text-slate-500">Belum ada member</td></tr>`;
+                return;
+            }
+            members.forEach((m, idx) => {
+                tbody.innerHTML += `
+                    <tr class="border-b border-slate-800 hover:bg-slate-950">
+                        <td class="p-2.5 font-bold text-cyan-400">${m.username}</td>
+                        <td class="p-2.5">${m.name}</td>
+                        <td class="p-2.5 font-bold text-emerald-400">Rp ${(m.balance || 0).toLocaleString('id-ID')}</td>
+                        <td class="p-2.5 flex items-center space-x-2">
+                            <button type="button" onclick="topUpMemberBalance(${idx})" class="px-2.5 py-1 bg-emerald-600/30 hover:bg-emerald-600 text-emerald-300 hover:text-white rounded-lg text-[10px] font-bold transition">Top-Up</button>
+                            <button type="button" onclick="deleteMember(${idx})" class="px-2.5 py-1 bg-rose-600/30 hover:bg-rose-600 text-rose-300 hover:text-white rounded-lg text-[10px] font-bold transition">Hapus</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function topUpMemberBalance(idx) {
+            playClickSound();
+            const nominalStr = prompt("Masukkan nominal top-up saldo billing:", "50000");
+            if(!nominalStr) return;
+            let amount = parseInt(nominalStr);
+            if(isNaN(amount) || amount <= 0) return alert("Nominal tidak valid!");
+
+            members[idx].balance = (members[idx].balance || 0) + amount;
+            localStorage.setItem('digidul_members', JSON.stringify(members));
+            if(loggedInMember && loggedInMember.username === members[idx].username) {
+                loggedInMember.balance = members[idx].balance;
+                localStorage.setItem('digidul_logged_member', JSON.stringify(loggedInMember));
+                checkLoggedMemberState();
+            }
+
+            playSuccessSound();
+            alert(`Top-up Rp ${amount.toLocaleString('id-ID')} berhasil untuk member ${members[idx].name}! Saldo sekarang: Rp ${members[idx].balance.toLocaleString('id-ID')}`);
+            renderOperatorMemberList();
+        }
+
+        function deleteMember(idx) {
+            if(confirm("Hapus member ini?")) {
+                members.splice(idx, 1);
+                localStorage.setItem('digidul_members', JSON.stringify(members));
+                playClickSound();
+                renderOperatorMemberList();
+            }
+        }
+
+        function handleMemberLogin(e) {
+            e.preventDefault();
+            playClickSound();
+            const username = document.getElementById('memberNameInput').value.trim();
+            const pin = document.getElementById('memberPinInput').value.trim();
+            const area = document.getElementById('memberDashboardArea');
+            area.classList.remove('hidden');
+
+            const found = members.find(m => m.username === username && m.pin === pin);
+            if(found) {
+                loggedInMember = found;
+                localStorage.setItem('digidul_logged_member', JSON.stringify(loggedInMember));
+                checkLoggedMemberState();
+
+                area.innerHTML = `
+                    <div class="p-3.5 bg-slate-900 rounded-xl border border-cyber-border space-y-2 text-xs">
+                        <p class="text-emerald-400 font-bold">Login Berhasil! Selamat datang, ${found.name}</p>
+                        <p class="text-slate-300">Saldo Billing Anda: <b class="text-emerald-400 font-orbitron text-sm">Rp ${(found.balance || 0).toLocaleString('id-ID')}</b></p>
+                        <button onclick="closeModal('memberModal')" class="w-full mt-2 py-2 bg-cyan-500 text-cyber-bg font-bold rounded-lg">Tutup & Mulai Booking</button>
+                    </div>
+                `;
+            } else {
+                area.innerHTML = `
+                    <div class="p-3.5 bg-rose-950/40 rounded-xl border border-rose-800 space-y-2 text-xs">
+                        <p class="text-rose-400 font-bold">Login Gagal!</p>
+                        <p class="text-slate-300">Username atau PIN Member salah.</p>
+                        <button onclick="logoutMember()" class="w-full mt-2 py-2 bg-slate-800 text-white font-bold rounded-lg text-xs">Coba Lagi</button>
+                    </div>
+                `;
+            }
+        }
+
+        function renderOperatorTransactions() {
+            const tbody = document.getElementById('opTransTableBody');
+            tbody.innerHTML = '';
+            if(activeSessions.filter(s => s.status === 'Aktif').length === 0 && transactions.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="p-3 text-center text-slate-500">Belum ada transaksi atau sesi aktif</td></tr>`;
+                return;
+            }
+
+            let rowsHtml = '';
+            activeSessions.filter(s => s.status === 'Aktif').forEach(s => {
+                let now = new Date().getTime();
+                let diff = s.endTime - now;
+                let countdownStr = "Selesai";
+                if(diff > 0) {
+                    let mins = Math.floor((diff / 1000) / 60);
+                    let secs = Math.floor((diff / 1000) % 60);
+                    countdownStr = `${mins}m ${secs}s`;
+                }
+
+                rowsHtml += `
+                    <tr class="border-b border-slate-800 hover:bg-slate-900">
+                        <td class="p-3 font-mono text-cyan-400">${s.unit}</td>
+                        <td class="p-3">${s.name}</td>
+                        <td class="p-3">${s.type} (${s.category})</td>
+                        <td class="p-3 font-bold text-amber-400 font-orbitron">${countdownStr}</td>
+                        <td class="p-3 font-bold text-emerald-400">Rp ${s.total.toLocaleString('id-ID')}</td>
+                        <td class="p-3">${s.payment}</td>
+                        <td class="p-3 flex items-center space-x-2">
+                            <button onclick="playClickSound(); stopSession('${s.unit}')" class="px-2.5 py-1 bg-rose-600/30 hover:bg-rose-600 text-rose-300 hover:text-white rounded-lg text-[10px] font-bold">Stop</button>
+                            <button onclick="playClickSound(); printSpecificInvoice('${s.id}')" class="px-2.5 py-1 bg-cyan-600/20 text-cyan-400 rounded-lg text-[10px] font-bold">Struk</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            transactions.slice().reverse().forEach(tx => {
+                if(tx.type === 'FnB') {
+                    rowsHtml += `
+                        <tr class="border-b border-slate-800 hover:bg-slate-900 opacity-80">
+                            <td class="p-3 font-mono text-amber-400">${tx.id}</td>
+                            <td class="p-3">${tx.unit}</td>
+                            <td class="p-3">FnB (Cafe)</td>
+                            <td class="p-3 text-slate-400">-</td>
+                            <td class="p-3 font-bold text-emerald-400">Rp ${tx.total.toLocaleString('id-ID')}</td>
+                            <td class="p-3">${tx.payment}</td>
+                            <td class="p-3"><button onclick="playClickSound(); printSpecificInvoice('${tx.id}')" class="px-2.5 py-1 bg-cyan-600/20 text-cyan-400 rounded-lg text-[10px] font-bold">Struk</button></td>
+                        </tr>
+                    `;
+                }
+            });
+
+            tbody.innerHTML = rowsHtml;
+        }
+
+        function updateFinanceReport() {
+            let pcRev = 0, conRev = 0, fnbRev = 0;
+            transactions.forEach(t => {
+                if(t.type === 'PC') pcRev += t.total;
+                else if(t.type === 'Konsol') conRev += t.total;
+                else if(t.type === 'FnB') fnbRev += t.total;
+            });
+            const totalRev = pcRev + conRev + fnbRev;
+            document.getElementById('repPcRev').innerText = 'Rp ' + pcRev.toLocaleString('id-ID');
+            document.getElementById('repConRev').innerText = 'Rp ' + conRev.toLocaleString('id-ID');
+            document.getElementById('repFnbRev').innerText = 'Rp ' + fnbRev.toLocaleString('id-ID');
+            document.getElementById('repTotalRev').innerText = 'Rp ' + totalRev.toLocaleString('id-ID');
+        }
+
+        function exportToExcel() {
+            playClickSound();
+            const ws = XLSX.utils.json_to_sheet(transactions);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Laporan Keuangan");
+            XLSX.writeFile(wb, "Laporan_Keuangan_DigidulSky.xlsx");
+        }
+
+        function exportToPDF() {
+            playClickSound();
+            const element = document.getElementById('financeReportArea');
+            html2pdf().from(element).save('Laporan_Keuangan_DigidulSky.pdf');
+        }
+
+        function renderShiftSchedule() {
+            const list = document.getElementById('shiftScheduleList');
+            if(!list) return;
+            list.innerHTML = '';
+            if(shifts.length === 0) {
+                list.innerHTML = `<p class="text-slate-500 text-center py-2">Belum ada jadwal shift.</p>`;
+                document.getElementById('totalShiftCount').innerText = '0 Shift';
+                document.getElementById('totalSalaryEstimate').innerText = 'Rp 0';
+                return;
+            }
+
+            let totalSalaryEst = 0;
+            shifts.forEach((shift, idx) => {
+                let shiftCost = shift.time.includes('Shift 3') ? 90000 : 75000;
+                totalSalaryEst += shiftCost;
+                list.innerHTML += `
+                    <div class="flex justify-between items-center p-3 bg-cyber-bg rounded-xl border border-slate-800">
+                        <div>
+                            <div class="font-bold text-white">${shift.name} - <span class="text-cyan-400">${shift.time}</span></div>
+                            <div class="text-[10px] text-emerald-400">Upah Shift: Rp ${shiftCost.toLocaleString('id-ID')} | Status: ${shift.status}</div>
+                        </div>
+                        <button onclick="playClickSound(); deleteShift(${idx})" class="px-2 py-1 bg-rose-600/30 hover:bg-rose-600 text-rose-300 hover:text-white rounded-lg text-[10px] font-bold">Hapus</button>
+                    </div>
+                `;
+            });
+
+            document.getElementById('totalShiftCount').innerText = shifts.length + ' Shift';
+            document.getElementById('totalSalaryEstimate').innerText = 'Rp ' + totalSalaryEst.toLocaleString('id-ID');
+        }
+
+        function addNewShift() {
+            playClickSound();
+            const staffName = prompt("Masukkan Nama Staff Operator (Karno, Trisno, Devi):", "Karno");
+            if(!staffName) return;
+            const shiftTime = prompt("Masukkan Jam Shift (Cth: 00.00 - 08.00 (Shift 3 - Malam)):", "00.00 - 08.00 (Shift 3 - Malam)");
+            if(!shiftTime) return;
+
+            shifts.push({ id: Date.now(), name: staffName, time: shiftTime, status: 'Hadir' });
+            localStorage.setItem('digidul_shifts', JSON.stringify(shifts));
+            playSuccessSound();
+            renderShiftSchedule();
+            alert("Jadwal shift berhasil ditambahkan!");
+        }
+
+        function deleteShift(idx) {
+            if(confirm("Hapus jadwal shift ini?")) {
+                shifts.splice(idx, 1);
+                localStorage.setItem('digidul_shifts', JSON.stringify(shifts));
+                playClickSound();
+                renderShiftSchedule();
+            }
+        }
+
+        setInterval(() => {
+            renderLivePCs();
+            renderLiveConsoles();
+            const opTransDiv = document.getElementById('opTrans');
+            if(opTransDiv && !opTransDiv.classList.contains('hidden')) {
+                renderOperatorTransactions();
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
